@@ -46,7 +46,7 @@ router.post('/add',imageUpload.array('photos',10),(req,res,next) =>{
         harga: req.body.harga,
         map: req.body.map,
         foto: req.files,
-        userid:
+        // userid:
     }).then(rumah =>{
         res.status(201).json(rumah)
     }).catch(err =>{
@@ -68,7 +68,7 @@ router.put('/edit/:id',imageUpload.array('photos',10),(req,res,next) =>{
         harga: req.body.harga,
         map: req.body.map,
         foto: req.body.foto,
-        userid:
+        // userid:
     },{
         where:{
             id: req.params.id
@@ -93,6 +93,29 @@ router.delete('/delete/:id', (req,res,next) =>{
       res.status(500).json({ err })
     })
   });
+
+router.post('/comment',(req,res,next) =>{
+    models.Komentar.create({
+        komen: req.body.komentar
+        // userid:
+    }).then(function(user){
+        res.status(201).json(user)
+    }).catch(err =>{
+        res.status(500).json({ err })
+    });
+});  
+
+router.delete('/delete/comment/:id',(req,res,next) =>{
+    models.Komentar.destroy({
+        where:{
+            id: req.params.id
+        }
+    }).then(function (komentar){
+        res.status(201).json(user)
+    }).catch( err =>{
+        res.status(500).json({ err })
+    })
+})
   
 
 module.exports = router;
