@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models/index')
+var jwt = require('jsonwebtoken')
+var secretKey = 'FajarIsInTheHouse'
 const bcrypt = require('bcrypt');
 const saltRounds = 5;
 const multer = require('multer')
@@ -25,10 +27,18 @@ const imageUpload = multer({
   ), 
 });
 
+router.get('/all', (req,res,next) =>{
+  models.User.findAll().then(function(user){
+    res.status(201).json(user);
+  }).catch(err =>{
+    res.status(500).json({err})
+  })
+})
 
 
 
-router.get('/', (req, res, next) => {
+
+router.get('/:id', (req, res, next) => {
   models.User.findAll({where:{
     firstname: req.body.firstname,
     lastname: req.body.lastname
@@ -38,6 +48,44 @@ router.get('/', (req, res, next) => {
     res.status(500).json({ err })
   })
  
+})
+
+router.post('/login', (req,res,next) =>{
+  let formEmail = req.body.email
+  let formPass = req.body.password
+  models.User.findOne({
+    where:{
+      email : formEmail
+    } 
+  }).then(user =>{ 
+    bcrypt.compare(formPass,user.password, (err,result) =>{
+      if(result){
+        var token = jwt.sign({
+          id: user.id,
+          name: user.firstname + ' ' + user.lastname
+        },secretKey,{ 
+          expiresIn: 60 * 60
+          
+        });
+        res.json({
+          success: true,
+          message: " Enjoy MotherFucker  !!",
+          token: token,
+          user
+        })
+      }else{
+        res.status(404).json({
+          message: "Not Found",
+          success: false
+      })
+      }
+    })
+  }).catch(err => {
+    res.status(500).json({err, 
+      message:'Email Not Found',
+      success: false  })
+  })
+  
 })
 
 router.post('/add', imageUpload.single('photos'), (req, res, next) => {

@@ -48,9 +48,16 @@ router.post('/add',imageUpload.array('photos',10),(req,res,next) =>{
         foto: req.files,
         // userid:
     }).then(rumah =>{
-        res.status(201).json(rumah)
-    }).catch(err =>{
-        res.status(500).json({err})
+        if(req.files.length == 0){
+            res.status(500).json({message: 'Masukan Foto!'})
+        }else{
+            res.status(201).json({
+                message: 'Commercial Posted',
+                rumah
+            })
+        }
+            }).catch(err =>{
+        res.status(500).json({err, message: 'Something Happen!'})
     });
 });
 
@@ -98,8 +105,8 @@ router.post('/comment',(req,res,next) =>{
     models.Komentar.create({
         komen: req.body.komentar
         // userid:
-    }).then(function(user){
-        res.status(201).json(user)
+    }).then(function(komentar){
+        res.status(201).json(komentar)
     }).catch(err =>{
         res.status(500).json({ err })
     });
@@ -111,7 +118,7 @@ router.delete('/delete/comment/:id',(req,res,next) =>{
             id: req.params.id
         }
     }).then(function (komentar){
-        res.status(201).json(user)
+        res.status(201).json(komentar)
     }).catch( err =>{
         res.status(500).json({ err })
     })

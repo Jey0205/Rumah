@@ -9,7 +9,7 @@ module.exports = {
     ), queryInterface.changeColumn(
       'Rumahs',
       'foto',
-     Sequelize.JSON
+     Sequelize.JSON,
     );
   },
 
